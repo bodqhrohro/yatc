@@ -1,17 +1,32 @@
 #!/bin/sh
-# require: sed, curl
-UA="Mozilla/5.0 (Linux) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1 Chrome"
+# require: grep, sed, curl
+UA="Opera/9.80 (Android; Opera Mini/12.0.1987/37.7327; U; pl) Presto/2.12.423 Version/12.16"
 ENC="UTF-8"
 
-SL=`echo $1|awk -F= '{print $1}'`
-TL=`echo $1|awk -F= '{print $2}'`
+SL=$(echo $1|awk -F= '{print $1}')
+TL=$(echo $1|awk -F= '{print $2}')
 
-curl -s https://translate.google.com/m \
- -d "hl=en" \
- -d "sl=$SL" \
- -d "tl=$TL" \
- -d "ie=$ENC" \
- -d "prev=_m" \
- --data-urlencode "q=$2" \
- -A "$UA" \
-|sed 's/.*class="t0">\([^<]*\)<.*/\1\n/'
+RETRY_NUMBER=20
+while [ $RETRY_NUMBER -gt 0 ]
+do
+	res=$(curl -s https://translate.google.com/m \
+	 -d "hl=en" \
+	 -d "sl=$SL" \
+	 -d "tl=$TL" \
+	 -d "ie=$ENC" \
+	 -d "prev=_m" \
+	 --data-urlencode "q=$2" \
+	 -A "$UA")
+
+	if ! echo "$res"|grep -F '<title>Error 502' >/dev/null
+	then
+		echo "$res"|sed 's/.*class="t0">\([^<]*\)<.*/\1/'
+		exit 0
+	fi
+
+	sleep 2
+	RETRY_NUMBER=$(($RETRY_NUMBER - 1))
+done
+
+echo 'Failure' >/dev/stderr
+exit 1

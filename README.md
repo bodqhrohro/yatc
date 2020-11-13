@@ -1,3 +1,8 @@
+## Dark times are coming: Google started throttling the PDA version of Google Translate
+Possibly it got abused (pretty expected with such a tool, right? ;)), so now 502 errors are returned occasionally. I did some tricks to handle that gracefully, but this tool can no more be considered reliable.
+
+I suggest [translate-shell](https://github.com/soimort/translate-shell) as a replacement; it has better reliablity and more features, as well as more backends. But the downside is an excessively wordy output, like some alternative tools have as well. `yatc` prints only the translation without any fancies.
+
 # yatc
 Yet Another Translate Client
 
