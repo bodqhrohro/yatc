@@ -6,8 +6,8 @@ ENC="UTF-8"
 SL=$(echo $1|awk -F= '{print $1}')
 TL=$(echo $1|awk -F= '{print $2}')
 
-RETRY_NUMBER=20
-while [ $RETRY_NUMBER -gt 0 ]
+RETRY_NUMBER=0
+while true
 do
 	res=$(curl -s https://translate.google.com/m \
 	 -d "hl=en" \
@@ -24,9 +24,14 @@ do
 		exit 0
 	fi
 
-	sleep 2
-	RETRY_NUMBER=$(($RETRY_NUMBER - 1))
-done
+	RETRY_NUMBER=$(( $RETRY_NUMBER + 1 ))
 
-echo 'Failure' >/dev/stderr
-exit 1
+	if [ $RETRY_NUMBER -gt 5 ]
+	then
+		echo 'Failure' >/dev/stderr
+		exit 1
+	fi
+
+	echo $(( 2 ** $RETRY_NUMBER ))
+	sleep $(( 2 ** $RETRY_NUMBER ))
+done
