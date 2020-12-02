@@ -9,7 +9,7 @@ TL=$(echo $1|awk -F= '{print $2}')
 RETRY_NUMBER=0
 while true
 do
-	res=$(curl -s https://translate.google.com/m \
+	res=$(curl -G -s https://translate.google.com/m \
 	 -d "hl=en" \
 	 -d "sl=$SL" \
 	 -d "tl=$TL" \
@@ -20,7 +20,7 @@ do
 
 	if ! echo "$res"|grep -F '<title>Error 502' >/dev/null
 	then
-		echo "$res"|sed 's/.*class="t0">\([^<]*\)<.*/\1/'
+		echo "$res"|grep '"result-container"'|sed 's/.*class="result-container">\([^<]*\)<.*/\1/'
 		exit 0
 	fi
 
