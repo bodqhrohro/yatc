@@ -12,4 +12,4 @@ Copy this script to you /usr/bin directory and start using. The command format i
 
 `yatc en=ru "make a barrel roll"`
 
-Language codes can be found here: [link](https://cloud.google.com/translate/v2/using_rest)
+Language codes can be found here: [link](https://cloud.google.com/translate/docs/languages)
